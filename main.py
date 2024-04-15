@@ -1,6 +1,6 @@
 import sqlalchemy as db
 import utils.utils as utils
-import 
+import flask
 
 # inicializa a conexão com o banco de dados
 engine = db.create_engine('sqlite:///banco_servidor.db')
