@@ -1,10 +1,12 @@
+import os
 import sqlalchemy as db
 import utils.utils as utils
-import flask
+from flask import Flask, render_template, request, redirect, url_for
 
 # inicializa a conexão com o banco de dados
 engine = db.create_engine('sqlite:///banco_servidor.db')
 conn = engine.connect()
+app = Flask(__name__)
 
 def setup_tabelas():
     metadata = db.MetaData()
@@ -33,10 +35,10 @@ def setup_tabelas():
 
     # efetiva a criação das tabelas
     metadata.create_all(engine)
-    
+
 def main(): 
-    utils.logs.limpa()
-    utils.logs.logo()
+    utils.utils.limpa()
+    utils.utils.logo()
     utils.logs.aviso('iniciando backend...')
     utils.logs.aviso('criando tabelas...')
     try:
@@ -48,3 +50,5 @@ def main():
     
 if __name__ == '__main__':
     main()
+    import endpoints
+    app.run(debug=True, port=1337) # iniciando em modo de debug
