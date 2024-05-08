@@ -1,12 +1,13 @@
 import os
 import sqlalchemy as db
 import utils.utils as utils
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask
 
 # inicializa a conexão com o banco de dados
+app = Flask(__name__)
+
 engine = db.create_engine('sqlite:///banco_servidor.db')
 conn = engine.connect()
-app = Flask(__name__)
 
 def setup_tabelas():
     metadata = db.MetaData()
@@ -52,4 +53,5 @@ from endpoints.crud import crud
 
 if __name__ == '__main__':
     main()
+    crud.endpoints
     app.run(debug=False, port=1337) # iniciando em modo de debug
