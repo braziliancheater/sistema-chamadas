@@ -23,7 +23,7 @@ def setup_tabelas():
     tb_imagens = db.Table('imagens', metadata,
         db.Column('id', db.Integer(), primary_key=True),
         db.Column('id_usuario', db.Integer(), db.ForeignKey('usuarios.id'), nullable=False),
-        db.Column('imagem', db.BLOB(), nullable=False),
+        db.Column('imagem', db.String(max), nullable=False),
     )
     
     # tabela de logs de acesso
@@ -47,8 +47,9 @@ def main():
     except Exception as e:
         utils.logs.erro(f'falha ao criar tabelas: {e}')
         return
-    
+
+from endpoints.crud import crud
+
 if __name__ == '__main__':
     main()
-    import endpoints
-    app.run(debug=True, port=1337) # iniciando em modo de debug
+    app.run(debug=False, port=1337) # iniciando em modo de debug

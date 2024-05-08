@@ -1,6 +1,5 @@
-from main import app
+from flask import Blueprint
 
-@app.route('/')
+@app.route("/")
 def index():
-    return 'Projetinho'
-    
+    return '<p>Index Pagina Principal<p>'
