@@ -26,4 +26,8 @@ def criar_sistema():
     from .index import index as index_blueprint
     app.register_blueprint(index_blueprint)
 
+    utils.logs.sucesso('criando autenticacao...')
+    from .autenticacao import autenticacao as auth_blueprint
+    app.register_blueprint(auth_blueprint)
+
     return app
