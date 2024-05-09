@@ -2,36 +2,38 @@ from app import db
 
 class Usuarios(db.Model):
     """
-        Criação da Tabela de Usuarios
+    Criação da Tabela de Usuarios
     """
-    __nome_tabela__ = "usuarios"
+    __tablename__ = "usuarios"
 
-    id = db.Column(db.Integer(), primary_key=True),
-    nome = db.Column(db.String(255), nullable=False),
-    idade = db.Column(db.Integer(), nullable=False),
-    email = db.Column(db.String(255), nullable=False),
+    id = db.Column(db.Integer(), primary_key=True)
+    nome = db.Column(db.String(255), nullable=False)
+    idade = db.Column(db.Integer(), nullable=False)
+    email = db.Column(db.String(255), nullable=False)
+    imagens = db.relationship('Imagens', backref='usuario', lazy='dynamic')
+    logs = db.relationship('Logs', backref='usuario', lazy='dynamic')
 
     def __repr__(self):
-        return "<usuarios: {}>".format(self.name)
+        return "<usuarios: {}>".format(self.nome)
 
 class Imagens(db.Model):
     """
-        Criação da Tabela de Imagens
+    Criação da Tabela de Imagens
     """
-    id = db.Column(db.Integer(), primary_key=True),
-    id_usuario = db.relationship('Usuarios', backref='imagens', lazy='dynamic', nullable=False),
-    imagem = db.Column(db.String(max), nullable=False),
+    id = db.Column(db.Integer(), primary_key=True)
+    id_usuario = db.Column(db.Integer(), db.ForeignKey('usuarios.id'), nullable=False)
+    imagem = db.Column(db.String(), nullable=False)
 
     def __repr__(self):
-        return "<imagens: {}>".format(self.name)
+        return "<imagens: {}>".format(self.imagem)
 
 class Logs(db.Model):
     """
-        Criação da Tabela de Logs
+    Criação da Tabela de Logs
     """
-    id = db.Column(db.Integer(), primary_key=True),
-    id_usuario = db.relationship('Usuarios', backref='logs', lazy='dynamic', nullable=False),
-    evento = db.Column(db.String(255), nullable=False),
+    id = db.Column(db.Integer(), primary_key=True)
+    id_usuario = db.Column(db.Integer(), db.ForeignKey('usuarios.id'), nullable=False)
+    evento = db.Column(db.String(255), nullable=False)
 
     def __repr__(self):
-        return "<logs: {}>".format(self.name)
+        return "<logs: {}>".format(self.evento)

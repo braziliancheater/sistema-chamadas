@@ -1,4 +1,4 @@
-from main import os
+import os
 
 class logs:     
     def sucesso(msg):
@@ -12,7 +12,13 @@ class logs:
     
 class utils:
     def logo():
-        print(f'sistema de presença - backend\nversão: 1.0 | base: HOMOLOGAÇÃO')
+        print(f'                                            .__  .__               __            \n\
+                _________.__. ______   ____ |  | |__| ____   _____/  |_  ____    \n\
+                /  ___<   |  |/  ___/ _/ ___\|  | |  |/ __ \ /    \   __\/ __ \  \n\
+                \___ \ \___  |\___ \  \  \___|  |_|  \  ___/|   |  \  | \  ___/  \n\
+               /____  >/ ____/____  >  \___  >____/__|\___  >___|  /__|  \___  >\n\
+                    \/ \/         \/       \/             \/     \/          \/ \n\
+              versão 2.0 | base: homologação\n')
     
     def limpa():
         # e windows?
