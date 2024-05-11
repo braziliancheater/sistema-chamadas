@@ -3,11 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <script src="../static/js/tailwind.js"></script>
     <title>{{ titulo_pagina }}</title>
 </head>
 <body>
-    <form action=""></form>
+    <form id="myForm" action="/registrar" method="POST">
+        <input type="text" name="nome" id="nome" placeholder="Seu nome">
+        <input type="email" name="email" id="email" placeholder="Seu email">
+        <input type="text" name="ra" id="ra" placeholder="Seu RA">
+        <div id="imagem"></div>
+        <input display="hidden" type="text" name="base64" id="base64">
+        <button type="button" onclick="takePicture()">Tirar Foto</button>
+        <button type="submit">Enviar</button>
+    </form>
+
+    <p id="email">{{ email }}</p>
+    <p id="nome">{{ nome }}</p>
+    <p id="ra">{{ ra }}</p>
+
+    <script>
+        document.getElementById('imagem').onchange = function() {
+        console.log("a");
+        const input = this.files[0];
+            if (input) {
+                const reader = new FileReader();
+                reader.onload = function() {
+                    const imageData = reader.result;
+                    document.getElementById('base64').value = imageData; // Set the base64 value to a hidden input field
+                }
+                reader.readAsDataURL(input);
+            }
+        };
+
+        function takePicture() {
+            const cameraContainer = document.getElementById('imagem');
+            // Check if getUserMedia is available
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(function (stream) {
+                        // Create a video element to display the stream
+                        const video = document.createElement('video');
+                        video.srcObject = stream;
+                        video.play();
+    
+                        // Append video element to the container
+                        cameraContainer.innerHTML = '';
+                        cameraContainer.appendChild(video);
+    
+                        // Create canvas element to capture the image
+                        const canvas = document.createElement('canvas');
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+                        const context = canvas.getContext('2d');
+    
+                        // Capture image from video stream when button is clicked
+                        const button = document.createElement('button');
+                        button.textContent = 'Capturar';
+                        button.onclick = function () {
+                            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                            const imageData = canvas.toDataURL('image/jpeg'); // Convert image to base64
+    
+                            // Display the captured image
+                            const capturedImage = new Image();
+                            capturedImage.src = imageData;
+                            cameraContainer.innerHTML = '';
+                            cameraContainer.appendChild(capturedImage);
+                        };
+                        cameraContainer.appendChild(button);
+                    })
+                    .catch(function (error) {
+                        console.error('Error accessing the camera:', error);
+                    });
+            } else {
+                console.error('getUserMedia is not supported');
+            }
+        }
+    </script>
+    
 </body>
 </html>

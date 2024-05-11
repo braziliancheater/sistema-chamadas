@@ -8,7 +8,7 @@ class Usuarios(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True)
     nome = db.Column(db.String(255), nullable=False)
-    idade = db.Column(db.Integer(), nullable=False)
+    ra = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), nullable=False)
     imagens = db.relationship('Imagens', backref='usuario', lazy='dynamic')
     logs = db.relationship('Logs', backref='usuario', lazy='dynamic')

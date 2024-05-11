@@ -5,4 +5,4 @@ from app import criar_sistema
 app = criar_sistema()
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
