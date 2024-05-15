@@ -3,10 +3,10 @@
 1. projeto e construido dentro do venv do python portanto para usar as libs instale
     venv
 
-    # aur
+    * aur
     yay -S python-venv
 
-    # windows
+    * windows
     python -m pip install venv
 
 2. iniciar o projeto usando o virtual enviroment
