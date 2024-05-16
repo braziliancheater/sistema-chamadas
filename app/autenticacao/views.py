@@ -3,9 +3,6 @@ from flask import render_template, request
 from . import autenticacao
 from .. import db
 from ..tabelas import Usuarios, Imagens
-import base64
-
-import base64
 
 @autenticacao.route('/registrar', methods=['GET'])
 def registrar():
@@ -16,7 +13,7 @@ def registrar():
 def verificacao_facial():
     return render_template('autenticacao/verificacao_facial.html')
 
-@autenticacao.route('/registrar3', methods=['GET', 'POST'])
+@autenticacao.route('/criar_conta', methods=['GET', 'POST'])
 def efetuar_registro():
     if request.method == 'POST':
             nome = request.form['nome']
@@ -24,17 +21,25 @@ def efetuar_registro():
             ra = request.form['ra']
             perfil = request.form['foto']
             
-            #print(f"nome do cabra: {nome}\n email: {email} \n ra: {ra} \n imagem: {base64_image}")
-            new_entry = Usuarios(nome=nome, email=email, ra=ra, imagem=perfil)
-            all_users = Usuarios.query.filter_by(email=email).first()
-            if all_users:
-                print(all_users)
-                # return render_template('register.html',  Email='already exist')
+            print(f"[{__name__}] Criando Usuaurio: \nNome: {nome}\nEmail: {email} \nRA: {ra}")
+            usuario = Usuarios(nome=nome, email=email, ra=ra)
+            usuario = Usuarios.query.filter_by(email=email).first()
+            if usuario:
+                print(f"[{__name__}] Usuário já existe")
+                return render_template('autenticacao/registrar.html',  Email='Email já cadastrado!')
             else:   
-                db.session.add(new_entry)
+                print(f"{__name__}] Criando Usuario")
+                db.session.add(usuario)
                 db.session.commit()
-                db.session.close()
+                try :
+                    print(f"[{__name__}] Criando Imagem")
+                    imagem = Imagens(usuario_id=usuario.id, imagem=perfil)
+                    db.session.add(imagem)
+                    db.session.commit()
+                except Exception as e:
+                    print(f"[{__name__}] Erro ao criar imagem: {e}")
+                    return "Erro ao cadastrar usuário!", 500
 
-            return "marcha";
+            return render_template('autenticacao/registro_sucesso.html')
     else:
-         return "nem"
+         return "Erro ao cadastrar usuário!", 500

@@ -10,11 +10,16 @@
     python -m pip install venv
 
 2. iniciar o projeto usando o virtual enviroment
-    source /etc/bin/activate
+    1. python -m venv embarcados
+
+    2. source /etc/bin/activate
     
     * vscode inicializa sozinho o virtual env no windows
 
-3. iniciando o projeto
+3. instalar bibliotecas utilizadas pelo projeto
+    python -m pip install -r requirements.txt
+
+4. iniciando o projeto
     rodar o run.py
     
     * o script verifica necessidade de criar as tabelas automaticamente

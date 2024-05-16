@@ -1,59 +1,71 @@
-const webcamBtn = document.querySelector('[data-video-botao]');
-const webcamContainer = document.querySelector('[data-camera]');
-const webcamDevice = document.querySelector('[data-video]');
-const pictureBtn = document.querySelector('[data-tirar-foto]');
-const pictureCanvas = document.querySelector('[data-video-canvas]'); 
-const pictureContainer = document.querySelector('[data-mensagem]'); 
-const formBtn = document.querySelector('[data-enviar]');
+const container_camera = document.querySelector('[data-camera]');
+const objeto_camera = document.querySelector('[data-video]');
 
-const imagemInput = document.querySelector('#foto');
-const nomeInput = document.querySelector('#nome');
-const emailInput = document.querySelector('#email');
-const raInput = document.querySelector('#ra');
+let url_imagem = '';
 
-let imageURL = '';
-
-// get access to user's webcam and show on page
-webcamBtn.addEventListener('click', async (e) => {
-    // user needs to authorize access
+/*
+    Abre a câmera do usuário e exibe na tela
+*/
+const abrir_camera_button = document.querySelector('[data-video-botao]');
+abrir_camera_button.addEventListener('click', async (e) => {
+    // usuario precisa permitir o acesso a camera
     try {
         const getWebcam = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-        webcamDevice.srcObject = getWebcam;
+        objeto_camera.srcObject = getWebcam;
     
-        webcamBtn.style.display = 'none';
-        webcamContainer.style.display = 'block';
+        abrir_camera_button.style.display = 'none';
+        container_camera.style.display = 'block';
     }
     catch (err) {
-        const errorMessage = e.target.parentNode.querySelector('.formulario__texto');
-        errorMessage.innerText = 'Você precisa conceder o acesso a sua câmera. Por favor, verifique as configurações do seu navegador e recarregue a página.';
-        errorMessage.classList = 'mensagem-erro';
+        const mensagem_erro = document.querySelector('[data-mensagem-erro]');
+        mensagem_erro.innerText = 'Você precisa conceder o acesso a sua câmera. Por favor, verifique as configurações do seu navegador e recarregue a página.';
         console.log(err);
     }
 });
 
-// show captured picture when the user clicks to take a photo
-pictureBtn.addEventListener('click', () => {
+/*
+Mostra a imagem capturada na tela e salva no localStorage
+*/
+const container_foto = document.querySelector('[data-mensagem]'); 
+const elemento_canvas = document.querySelector('[data-video-canvas]'); 
+const tirar_foto_button = document.querySelector('[data-tirar-foto]');
+const imagemInput = document.querySelector('#foto');
+const nomeInput = document.querySelector('#nome');
+const emailInput = document.querySelector('#email');
+const raInput = document.querySelector('#ra');
+tirar_foto_button.addEventListener('click', () => {
     // create an image based on current frame of the webcam
-    pictureCanvas.getContext('2d').drawImage(webcamDevice, 0, 0, pictureCanvas.width, pictureCanvas.height);
+    elemento_canvas.getContext('2d').drawImage(objeto_camera, 0, 0, elemento_canvas.width, elemento_canvas.height);
 
     // save image as JPEG
-    imageURL = pictureCanvas.toDataURL('image/jpeg');
+    url_imagem = elemento_canvas.toDataURL('image/jpeg');
 
-    webcamContainer.style.display = 'none';
-    pictureContainer.style.display = 'block';
+    container_camera.style.display = 'none';
+    container_foto.style.display = 'block';
 
-    imagemInput.value = imageURL;
-    const localData = JSON.parse(localStorage.getItem('register'));
+    imagemInput.value = url_imagem;
+    const localData = JSON.parse(localStorage.getItem('registro'));
     nomeInput.value = localData.nome;
     emailInput.value = localData.email;
     raInput.value = localData.ra;
 });
 
-// save picture locally in the browser
-formBtn.addEventListener('click', () => {
-    const localData = JSON.parse(localStorage.getItem('register'));
-    // add image content to local storage
-    localData.image =  imageURL;
-    localStorage.setItem('register', JSON.stringify(localData));
-
+/*
+    Salva a imagem no localStorage
+*/
+const elemento_formulario = document.querySelector('[data-enviar]'); // obtem o formulario
+elemento_formulario.addEventListener('click', () => {
+    const localData = JSON.parse(localStorage.getItem('registro')); // obtem o objeto do localStorage
+    
+    localData.image =  url_imagem; // adiciona uma nova propriedade ao objeto
+    localStorage.setItem('registro', JSON.stringify(localData)); // atualiza o objeto no localStorage
 })
+
+/*
+Refaz a foto
+*/
+const refazer_foto_button = document.querySelector('[data-refazer-foto]');
+refazer_foto_button.addEventListener('click', () => {
+    container_foto.style.display = 'none';
+    container_camera.style.display = 'block';
+});

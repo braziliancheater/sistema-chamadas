@@ -1,32 +1,31 @@
 from flask import Flask
-import sqlalchemy as db
 from flask_sqlalchemy import SQLAlchemy
-from utils import utils
-
-db = SQLAlchemy()
+from utils.utilidades import Logs, Utilidades
 
 def criar_sistema():
-    utils.utils.limpa()
-    utils.utils.logo()
-    utils.logs.aviso('iniciando cliente...')
-    
+    Utilidades.limpa()
+    Utilidades.logo()
+    Logs.msg_aviso(__name__, 'Iniciando cliente...')
+
     app = Flask(__name__)
+
+    # Configurações do banco de dados
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///banco_servidor.db'
     
-    engine = db.create_engine('sqlite:///banco_servidor.db')
-    conn = engine.connect()
+    # Inicialize o SQLAlchemy com a aplicação Flask
+    db = SQLAlchemy(app)
+    
+    Logs.msg_aviso(__name__, 'Importando tabelas...')
+    from app import tabelas
+    
+    with app.app_context():
+        db.create_all()
 
-    utils.logs.aviso('importando tabelas...')
-    try:
-        from app import tabelas
-    except Exception as e:
-        utils.logs.erro(f'falha ao criar tabelas: {e}')
-        return
-
-    utils.logs.sucesso('criando index...')
+    Logs.msg_sucesso(__name__, 'Criando index...')
     from .index import index as index_blueprint
     app.register_blueprint(index_blueprint)
 
-    utils.logs.sucesso('criando autenticacao...')
+    Logs.msg_sucesso(__name__, 'Criando autenticação...')
     from .autenticacao import autenticacao as auth_blueprint
     app.register_blueprint(auth_blueprint)
 
