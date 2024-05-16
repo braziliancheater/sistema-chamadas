@@ -8,7 +8,6 @@ from ..tabelas import Usuarios, Imagens
 def registrar():
     return render_template('autenticacao/registrar.html')
 
-
 @autenticacao.route('/verificacao_facial')
 def verificacao_facial():
     return render_template('autenticacao/verificacao_facial.html')
@@ -23,8 +22,8 @@ def efetuar_registro():
             
             print(f"[{__name__}] Criando Usuaurio: \nNome: {nome}\nEmail: {email} \nRA: {ra}")
             usuario = Usuarios(nome=nome, email=email, ra=ra)
-            usuario = Usuarios.query.filter_by(email=email).first()
-            if usuario:
+            usuario_verifica = Usuarios.query.filter_by(email=email).first()
+            if usuario_verifica:
                 print(f"[{__name__}] Usuário já existe")
                 return render_template('autenticacao/registrar.html',  Email='Email já cadastrado!')
             else:   
@@ -33,7 +32,7 @@ def efetuar_registro():
                 db.session.commit()
                 try :
                     print(f"[{__name__}] Criando Imagem")
-                    imagem = Imagens(usuario_id=usuario.id, imagem=perfil)
+                    imagem = Imagens(id_usuario=usuario.id, imagem=perfil)
                     db.session.add(imagem)
                     db.session.commit()
                 except Exception as e:

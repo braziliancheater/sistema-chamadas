@@ -10,8 +10,8 @@ class Usuarios(db.Model):
     nome = db.Column(db.String(255), nullable=False)
     ra = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), nullable=False)
-    imagens = db.relationship('Imagens', backref='usuario', lazy='dynamic')
-    logs = db.relationship('Logs', backref='usuario', lazy='dynamic')
+    #imagens = db.relationship('Imagens', backref='usuario', lazy='dynamic')
+    #logs = db.relationship('Logs', backref='usuario', lazy='dynamic')
 
     def __repr__(self):
         return "<usuarios: {}>".format(self.nome)
