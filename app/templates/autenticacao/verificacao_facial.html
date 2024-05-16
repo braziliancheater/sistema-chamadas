@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FHO Faltas | Verificação Facial</title>
+
+    <script src="../../static/js/tailwind.js"></script>
+
+    <link rel="shortcut icon" href="../../static/images/fho_logo.png" type="image/x-icon">
+</head>
+<body>
+    <section class="bg-gray-50 dark:bg-gray-900">
+        <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+            <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
+                <img class="w-24 h-12 mr-2" src="../../static/images/fho_logo.png" alt="Logo do Projeto">
+                Sistema de Faltas
+            </a>
+            <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+                <form method="post" action="registrar3">
+
+                    <div class="hidden">
+                        <input type="text" name="nome" id="nome" required>
+                        <input type="email" name="email" id="email" required>
+                        <input type="text" name="ra" id="ra" required>
+                        <input type="text" name="foto" id="foto" required>
+                    </div>
+                    
+                    <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                        <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+                            Reconhecimento Facial
+                        </h1>
+                        <p class="text-white text-sm font-normal">Clique no quadrado abaixo para realizar a foto.</p>
+                        
+
+                        <img src="../../static/images/reconhecimento.png" alt="Clique aqui para abrir a camera..." data-video-botao>
+                        <div class="formulario__camera hidden" data-camera>
+                            <video class="w-full" width="320" height="240" autoplay data-video></video>
+                            <button class="mt-4 rounded-lg p-2 bg-blue-600 text-white w-full hover:bg-blue-700 flex justify-center inline" data-tirar-foto>
+                                <svg class="mr-2" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#ffffff" d="M149.1 64.8L138.7 96H64C28.7 96 0 124.7 0 160V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V160c0-35.3-28.7-64-64-64H373.3L362.9 64.8C356.4 45.2 338.1 32 317.4 32H194.6c-20.7 0-39 13.2-45.5 32.8zM256 192a96 96 0 1 1 0 192 96 96 0 1 1 0-192z"/></svg>
+                                Tirar foto
+                            </button>
+                        </div>
+                        
+                        <div class="hidden" data-mensagem>
+                            <canvas class="w-full" width="320" height="240" data-video-canvas></canvas>
+                            <p class="text-white font-medium py-2 flex inline">
+                                <svg class="mr-2 text-white" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#ffffff" d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>
+                                Imagem Capturada com Sucesso!
+                            </p>
+
+                            <a type="submit" id="enviar" class="text-center justify-center flex inline mt-4 rounded-lg p-2 bg-blue-600 text-white w-full hover:bg-blue-700" href="#" class="formulario__botao formulario__botao--ancora" data-enviar>
+                                <svg class="mr-2" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="#ffffff" d="M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zm80 256h64c44.2 0 80 35.8 80 80c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16c0-44.2 35.8-80 80-80zm-32-96a64 64 0 1 1 128 0 64 64 0 1 1 -128 0zm256-32H496c8.8 0 16 7.2 16 16s-7.2 16-16 16H368c-8.8 0-16-7.2-16-16s7.2-16 16-16zm0 64H496c8.8 0 16 7.2 16 16s-7.2 16-16 16H368c-8.8 0-16-7.2-16-16s7.2-16 16-16zm0 64H496c8.8 0 16 7.2 16 16s-7.2 16-16 16H368c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/></svg>
+                                Registrar
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+      </section>
+
+    <script src="../../static/js/webcam.js" type="module"></script>
+</body>
+</html>

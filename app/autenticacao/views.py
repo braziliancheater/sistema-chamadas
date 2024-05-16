@@ -7,28 +7,34 @@ import base64
 
 import base64
 
-@autenticacao.route('/registrar', methods=['GET', 'POST'])
+@autenticacao.route('/registrar', methods=['GET'])
 def registrar():
-    if request.method == 'POST':
-        nome = request.form['nome']
-        email = request.form['email']
-        ra = request.form['ra']
-        base64_image = request.form['base64']  # Get the base64 encoded image
-        print(nome, email, ra, base64_image)
-
-        # Decode base64 image data
-        image_data = base64.b64decode(base64_image.split(',')[1])
-        
-        # Store image data in the database or process it as needed
-        
-        new_entry = Usuarios(nome=nome, email=email, ra=ra, imagem=image_data)
-        all_users = Usuarios.query.filter_by(email=email).first()
-        if all_users:
-            print(all_users)
-            # return render_template('register.html',  Email='already exist')
-        else:   
-            db.session.add(new_entry)
-            db.session.commit()
-            db.session.close()
-        return render_template('autenticacao/registrar.html', nome=nome, email=email, ra=ra)
     return render_template('autenticacao/registrar.html')
+
+
+@autenticacao.route('/verificacao_facial')
+def verificacao_facial():
+    return render_template('autenticacao/verificacao_facial.html')
+
+@autenticacao.route('/registrar3', methods=['GET', 'POST'])
+def efetuar_registro():
+    if request.method == 'POST':
+            nome = request.form['nome']
+            email = request.form['email']
+            ra = request.form['ra']
+            perfil = request.form['foto']
+            
+            #print(f"nome do cabra: {nome}\n email: {email} \n ra: {ra} \n imagem: {base64_image}")
+            new_entry = Usuarios(nome=nome, email=email, ra=ra, imagem=perfil)
+            all_users = Usuarios.query.filter_by(email=email).first()
+            if all_users:
+                print(all_users)
+                # return render_template('register.html',  Email='already exist')
+            else:   
+                db.session.add(new_entry)
+                db.session.commit()
+                db.session.close()
+
+            return "marcha";
+    else:
+         return "nem"

@@ -3,81 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ titulo_pagina }}</title>
+    <title>FHO Faltas | Registrar-se</title>
+    <script src="../../static/js/tailwind.js"></script>
+
+    <link rel="shortcut icon" href="../../static/images/fho_logo.png" type="image/x-icon">
 </head>
 <body>
-    <form id="myForm" action="/registrar" method="POST">
-        <input type="text" name="nome" id="nome" placeholder="Seu nome">
-        <input type="email" name="email" id="email" placeholder="Seu email">
-        <input type="text" name="ra" id="ra" placeholder="Seu RA">
-        <div id="imagem"></div>
-        <input display="hidden" type="text" name="base64" id="base64">
-        <button type="button" onclick="takePicture()">Tirar Foto</button>
-        <button type="submit">Enviar</button>
-    </form>
+    <section class="bg-gray-50 dark:bg-gray-900">
+        <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+            <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
+                <img class="w-24 h-12 mr-2" src="../../static/images/fho_logo.png" alt="Logo do Projeto">
+                Sistema de Faltas
+            </a>
+            <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+                <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                    <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+                        Criação de Conta
+                    </h1>
+                    <form class="space-y-4 md:space-y-6" data-formulario>
+                        <div>
+                            <label for="nome" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Seu Nome</label>
+                            <input type="text" name="nome" id="nome" placeholder="Gabriel, Felipe..." class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required="">
+                        </div>
+                        <div>
+                            <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Seu Email</label>
+                            <input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="nome@exemplo.com" required="">
+                        </div>
+                        <div>
+                            <label for="ra" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Seu RA</label>
+                            <input type="text" name="ra" id="ra" placeholder="106001" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required="">
+                        </div>
+                        <div>
+                            <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Senha</label>
+                            <input type="password" name="password" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required="">
+                        </div>
 
-    <p id="email">{{ email }}</p>
-    <p id="nome">{{ nome }}</p>
-    <p id="ra">{{ ra }}</p>
+                        <button type="submit" class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Criar meu usuário</button>
+                        <p class="text-sm font-light text-gray-500 dark:text-gray-400">
+                            Já tem uma conta? <a href="#" class="font-medium text-blue-600 hover:underline dark:text-blue-500">Entrar</a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+      </section>
 
-    <script>
-        document.getElementById('imagem').onchange = function() {
-        console.log("a");
-        const input = this.files[0];
-            if (input) {
-                const reader = new FileReader();
-                reader.onload = function() {
-                    const imageData = reader.result;
-                    document.getElementById('base64').value = imageData; // Set the base64 value to a hidden input field
-                }
-                reader.readAsDataURL(input);
-            }
-        };
-
-        function takePicture() {
-            const cameraContainer = document.getElementById('imagem');
-            // Check if getUserMedia is available
-            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                navigator.mediaDevices.getUserMedia({ video: true })
-                    .then(function (stream) {
-                        // Create a video element to display the stream
-                        const video = document.createElement('video');
-                        video.srcObject = stream;
-                        video.play();
-    
-                        // Append video element to the container
-                        cameraContainer.innerHTML = '';
-                        cameraContainer.appendChild(video);
-    
-                        // Create canvas element to capture the image
-                        const canvas = document.createElement('canvas');
-                        canvas.width = video.videoWidth;
-                        canvas.height = video.videoHeight;
-                        const context = canvas.getContext('2d');
-    
-                        // Capture image from video stream when button is clicked
-                        const button = document.createElement('button');
-                        button.textContent = 'Capturar';
-                        button.onclick = function () {
-                            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                            const imageData = canvas.toDataURL('image/jpeg'); // Convert image to base64
-    
-                            // Display the captured image
-                            const capturedImage = new Image();
-                            capturedImage.src = imageData;
-                            cameraContainer.innerHTML = '';
-                            cameraContainer.appendChild(capturedImage);
-                        };
-                        cameraContainer.appendChild(button);
-                    })
-                    .catch(function (error) {
-                        console.error('Error accessing the camera:', error);
-                    });
-            } else {
-                console.error('getUserMedia is not supported');
-            }
-        }
-    </script>
-    
+    <script src="../../static/js/registro.js" type="module"></script>
 </body>
 </html>
+<!-- Gabigol Ind -->
