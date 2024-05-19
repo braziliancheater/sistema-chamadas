@@ -34,6 +34,10 @@ def criar_sistema():
     from .autenticacao import autenticacao as auth_blueprint
     app.register_blueprint(auth_blueprint)
 
+    Logs.msg_sucesso(__name__, 'Criando presenças...')
+    from .presencas import presencas as presencas_blueprint
+    app.register_blueprint(presencas_blueprint)
+
     db.init_app(app)
     with app.app_context():
         if (db.create_all()):
