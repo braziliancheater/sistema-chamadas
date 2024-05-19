@@ -1,11 +1,19 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
+from flask_login import LoginManager
 from .utils.utilidades import Logs, Utilidades
 
 app = Flask(__name__)
 
 # Configurações do banco de dados
+app.config['SECRET_KEY'] = 'chave_Secreta'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///banco_servidor.db'
+
+bcrypt = Bcrypt(app)
+login_manager = LoginManager(app)
+login_manager.login_view = 'autenticacao.login'
+login_manager.login_message_category = 'info'
 
 # Inicialize o SQLAlchemy com a aplicação Flask
 db = SQLAlchemy()

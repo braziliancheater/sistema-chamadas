@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FHO Faltas - {% block title %}{% endblock %}</title>
+    <script src="../../static/js/tailwind.js"></script>
+
+    <link rel="shortcut icon" href="../../static/images/favicon.png" type="image/x-icon">
+</head>
+<body>
+    <div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    {% if category == 'error' %}
+                        <div class="p-4 font-semibold bg-red-500 text-white alert-{{ category }}">{{ message }}</div>
+                    {% endif %}
+                    {% if category == 'success' %}
+                        <div class="p-4 font-semibold bg-green-500 text-white alert-{{ category }}">{{ message }}</div>
+                    {% endif %}
+                    {% if category == 'info' %}
+                        <div class="p-4 font-semibold bg-green-500 text-white alert-{{ category }}">{{ message }}</div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+    {% block content %}{% endblock %}
+</body>
+</html>

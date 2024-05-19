@@ -32,6 +32,7 @@ const tirar_foto_button = document.querySelector('[data-tirar-foto]');
 const imagemInput = document.querySelector('#foto');
 const nomeInput = document.querySelector('#nome');
 const emailInput = document.querySelector('#email');
+const senhaInput = document.querySelector('#senha');
 const raInput = document.querySelector('#ra');
 tirar_foto_button.addEventListener('click', () => {
     // create an image based on current frame of the webcam
@@ -48,6 +49,7 @@ tirar_foto_button.addEventListener('click', () => {
     nomeInput.value = localData.nome;
     emailInput.value = localData.email;
     raInput.value = localData.ra;
+    senhaInput.value = localData.password;
 });
 
 /*
