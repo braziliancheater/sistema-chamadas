@@ -1,8 +1,5 @@
-import os
-from app import criar_sistema
+from server import run as run_s
+from client import run as run_c
 
-#config_name = os.getenv('FLASK_CONFIG')
-app = criar_sistema()
-
-if __name__ == '__main__':
-    app.run(debug=True)
+run_s.inicar_servidor()
+run_c.inicar_cliente()

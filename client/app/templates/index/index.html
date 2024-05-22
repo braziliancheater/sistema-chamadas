@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask Button Click</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Update Database with Button Click</h1>
+    <button id="update-button">Update Table</button>
+
+    <script>
+        $(document).ready(function(){
+            $('#update-button').click(function(){
+                $.ajax({
+                    url: '/update_table',
+                    type: 'POST',
+                    data: {name: 'Sample Name'},
+                    success: function(response) {
+                        alert('Table updated with name: ' + response.name);
+                    },
+                    error: function(error) {
+                        alert('Error: ' + error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -19,13 +19,8 @@ class Logs:
 class Utilidades:
     @staticmethod
     def logo():
-        print(f'                                            .__  .__               __            \n\
-                _________.__. ______   ____ |  | |__| ____   _____/  |_  ____    \n\
-                /  ___<   |  |/  ___/ _/ ___\|  | |  |/ __ \ /    \   __\/ __ \  \n\
-                \___ \ \___  |\___ \  \  \___|  |_|  \  ___/|   |  \  | \  ___/  \n\
-               /____  >/ ____/____  >  \___  >____/__|\___  >___|  /__|  \___  >\n\
-                    \/ \/         \/       \/             \/     \/          \/ \n\
-              versão 2.0 | base: homologação\n')
+        print(f'fho - sistema de presencas\n\
+              servidor | versão 2.0 | base: homologação\n')
     
     @staticmethod
     def limpa():

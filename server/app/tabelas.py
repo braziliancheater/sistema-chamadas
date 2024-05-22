@@ -39,3 +39,26 @@ class Logs(db.Model):
 
     def __repr__(self):
         return "<logs: {}>".format(self.evento)
+
+class Materias(db.Model):
+    """
+    Criação da Tabela de Matérias
+    """
+    id = db.Column(db.Integer(), primary_key=True)
+    nome = db.Column(db.String(255), nullable=False)
+
+    def __repr__(self):
+        return "<materias: {}>".format(self.nome)
+
+class Presencas(db.Model):
+    """
+    Criação da Tabela de Presenças
+    """
+    id = db.Column(db.Integer(), primary_key=True)
+    id_usuario = db.Column(db.Integer(), db.ForeignKey('usuarios.id'), nullable=False)
+    id_materia = db.Column(db.Integer(), db.ForeignKey('materias.id'), nullable=False)
+    data = db.Column(db.String(255), nullable=False)
+    hora = db.Column(db.String(255), nullable=False)
+
+    def __repr__(self):
+        return "<presencas: {}>".format(self.data)
