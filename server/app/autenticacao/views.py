@@ -90,7 +90,7 @@ def lista_usuarios():
 def deletar_usuario(id):
     user = Usuarios.query.get_or_404(id)
     try:
-        # Deleting the associated images first
+        # deleta o usuario
         Imagens.query.filter_by(id_usuario=id).delete()
         db.session.delete(user)
         db.session.commit()
@@ -98,4 +98,30 @@ def deletar_usuario(id):
     except Exception as e:
         db.session.rollback()
         flash(f'Erro ao apagar o usuario: {e}', 'danger')
+    return redirect(url_for('autenticacao.lista_usuarios'))
+
+@autenticacao.route("/tornar_professor/<int:id>", methods=['POST'])
+@login_required
+def tornar_professor(id):
+    user = Usuarios.query.get_or_404(id)
+    user.professor = True
+    try:
+        db.session.commit()
+        flash('O usuário se tornou professor', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Erro ao atualizar o usuário: {e}', 'danger')
+    return redirect(url_for('autenticacao.lista_usuarios'))
+
+@autenticacao.route("/remover_professor/<int:id>", methods=['POST'])
+@login_required
+def remover_professor(id):
+    user = Usuarios.query.get_or_404(id)
+    user.professor = False
+    try:
+        db.session.commit()
+        flash('O usuário deixou de ser professor', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Erro ao atualizar o usuário: {e}', 'danger')
     return redirect(url_for('autenticacao.lista_usuarios'))

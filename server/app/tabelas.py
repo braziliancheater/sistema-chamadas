@@ -13,6 +13,7 @@ class Usuarios(db.Model, UserMixin):
     ra = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), nullable=False)
     senha = db.Column(db.String(255), nullable=False)
+    professor = db.Column(db.Integer(), nullable=True)
     imagens = db.relationship('Imagens', backref='usuario', lazy=True)
 
     def __repr__(self):
