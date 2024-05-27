@@ -8,14 +8,20 @@ from ..tabelas import Usuarios, Imagens, Propriedades
 import base64
 from io import BytesIO
 from PIL import Image
+import time
+
+known_face_encodings = []
+known_face_names = []
+stop_video_feed = False  # variavel para parar o video feed
 
 def load_known_faces():
-    known_face_encodings = []
-    known_face_names = []
-    
+    global known_face_encodings, known_face_names
+    known_face_encodings.clear()
+    known_face_names.clear()
+
     # busca todos os usuarios
     users = Usuarios.query.all()
-    
+
     for user in users:
         # obtem todas as imagens de usuarios
         user_images = Imagens.query.filter_by(id_usuario=user.id).all()
@@ -23,10 +29,10 @@ def load_known_faces():
             try:
                 # obtem as imagens em divide na ,
                 base64_image = user_image.imagem.split(",")[-1]
-                
+
                 # decode do base64 para imagem
                 img_data = base64.b64decode(base64_image)
-                
+
                 # carrega as imagens e encode do face_recognition
                 img = Image.open(BytesIO(img_data))
                 img_array = np.array(img)
@@ -37,19 +43,33 @@ def load_known_faces():
                     log.log_sucesso(__name__, f"usuario {user.nome} carregado.")
             except Exception as e:
                 log.log_erro(__name__, f"erro ao carregar a imagem do usuario: {user.nome}: {e}")
-    
+
     return known_face_encodings, known_face_names
+
 
 def init_known_faces():
     # inicia o processo de carregamento das faces
     log.log_sucesso(__name__, "iniciando Faces")
-    global known_face_encodings, known_face_names
-    known_face_encodings, known_face_names = load_known_faces()
+    global known_face_encodings, known_face_names, stop_video_feed
+    stop_video_feed = True
+
+    # dormimos por 5 segundos para garantir que o video feed seja parado
+    time.sleep(2)
+
+    try:
+        known_face_encodings, known_face_names = load_known_faces()
+    except Exception as e:
+        log.log_erro(__name__, f"erro ao carregar as faces: {e}")
+
+    stop_video_feed = False
 
 def gen_frames():
     # inicializa a captura de video
     video_capture = cv2.VideoCapture(0)
     while True:
+        if stop_video_feed:  # verifica se o video feed deve ser parado
+            break
+
         success, frame = video_capture.read()
         if not success:
             break
@@ -87,15 +107,25 @@ def video_feed():
     # retorna a resposta com o video
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
+
 @index.route('/')
 def index():
     # inicializa o sistema de faces
     init_known_faces()
+    usuarios = Usuarios.query.all()
 
     # obtem o status
-    try:
-        pass
-    except:
-        pass
+    valor = Propriedades.query.filter_by(prop_nome='status').first()
+    # criar o status se nao existe
+    if valor is None:
+        valor = '0'
+        prop = Propriedades(prop_nome='status', prop_valor=valor)
+        db.session.add(prop)
+        db.session.commit()
 
-    return render_template('index/index.html', status='True')
+    if valor.prop_valor == '1':
+        status = f'Chamada em andamento | Prop: {valor.prop_valor}'
+    else:
+        status = f'Aguardando chamada | Prop: {valor.prop_valor}'
+
+    return render_template('index/index.html', status=status, usuarios=usuarios)

@@ -23,7 +23,7 @@ def criar_cliente():
     except Exception as e:
         log.log_erro('cliente', f'erro ao importar tabelas: {e}')
     
-    log.log_sucesso('cliente', 'criando blueprint index')
+    log.log_aviso('cliente', 'criando blueprint index')
     try:
         from .index import index as index_blueprint
         app.register_blueprint(index_blueprint)
@@ -31,13 +31,21 @@ def criar_cliente():
     except Exception as e:
         log.log_erro('cliente', f'erro ao criar blueprint index: {e}')
 
-    log.log_sucesso('cliente', 'criando blueprint presenças')
+    log.log_aviso('cliente', 'criando blueprint presenças')
     try:
         from .presencas import presencas as presencas_blueprint
         app.register_blueprint(presencas_blueprint)
         log.log_sucesso('cliente', 'blueprint presenças criado com sucesso')
     except Exception as e:
         log.log_erro('cliente', f'erro ao criar blueprint presenças: {e}')
+
+    log.log_aviso('cliente', 'criando blueprint sincronismo')
+    try:
+        from .sincronismo import sincronismo as sincronismo_blueprint
+        app.register_blueprint(sincronismo_blueprint)
+        log.log_sucesso('cliente', 'blueprint sincronismo criado com sucesso')
+    except Exception as e:
+        log.log_erro('cliente', f'erro ao criar blueprint sincronismo: {e}')
 
     db.init_app(app)
     with app.app_context():

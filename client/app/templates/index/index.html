@@ -4,11 +4,98 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FHO Faltas - Pagina Inicial</title>
+
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+    </style>
 </head>
 <body>
     <img src="{{ url_for('index.video_feed') }}" width="800" />
     <p>Status do sistema de presenças: {{ status }}</p>
-    <button>Iniciar Chamada</button>
-    <button>Finalizar Chamada</button>
+    <button id="presenca_inicio">Iniciar Chamada</button>
+    <button id="presenca_fim">Finalizar Chamada</button>
+    <button id="sincronizar_usu">Forçar Sincronização de Usuários</button>
+
+    <table style="padding-top: 10px; margin-top: 10px;">
+        <thead>
+        <tr>
+            <th>Nome</th>
+            <th>RA</th>
+            <th>Email</th>
+            <th>Foto</th>
+            <th>Professor</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for usuario in usuarios %}
+            <tr>
+                <td>{{ usuario.nome }}</td>
+                <td>{{ usuario.ra }}</td>
+                <td>{{ usuario.email }}</td>
+                <td>
+                    {% if usuario.imagens %}
+                        {% for imagem in usuario.imagens %}
+                            <img src="{{ imagem.imagem }}" alt="Foto de {{ usuario.nome }}" style="width: 50px; height: 50px;">
+                        {% endfor %}
+                    {% else %}
+                        Sem Fotos
+                    {% endif %}
+                </td>
+                <td>{{ usuario.professor }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        document.getElementById('sincronizar_usu').addEventListener('click', function() {
+            fetch('/sincronismo/forcar')
+                .then(response => {
+                    if (response.ok) {
+                        return response.text();
+                    }
+                    throw new Error('Erro na sincronização de usuários');
+                })
+                .then(text => {
+                    alert(text);
+                })
+                .catch(error => {
+                    alert(error.message);
+                });
+        });
+        document.getElementById('presenca_inicio').addEventListener('click', function() {
+            fetch('/presencas/iniciar')
+                .then(response => {
+                    if (response.ok) {
+                        return response.text();
+                    }
+                    throw new Error('Erro ao iniciar as presenças');
+                })
+                .then(text => {
+                    alert(text);
+                })
+                .catch(error => {
+                    alert(error.message);
+                });
+        });
+        document.getElementById('presenca_fim').addEventListener('click', function() {
+            fetch('/presencas/parar')
+                .then(response => {
+                    if (response.ok) {
+                        return response.text();
+                    }
+                    throw new Error('Erro ao finalizar as presenças');
+                })
+                .then(text => {
+                    alert(text);
+                })
+                .catch(error => {
+                    alert(error.message);
+                });
+        });
+    </script>
 </body>
 </html>
