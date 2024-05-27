@@ -50,7 +50,7 @@ class Presencas(db.Model):
     """
     id = db.Column(db.Integer(), primary_key=True)
     id_usuario = db.Column(db.Integer(), db.ForeignKey('usuarios.id'), nullable=False)
-    id_materia = db.Column(db.Integer(), db.ForeignKey('materias.id'), nullable=False)
+    id_materia = db.Column(db.Integer(), db.ForeignKey('materias.id'), nullable=True)
     data = db.Column(db.String(255), nullable=False)
     hora = db.Column(db.String(255), nullable=False)
 

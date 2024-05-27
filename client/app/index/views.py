@@ -9,9 +9,11 @@ import base64
 from io import BytesIO
 from PIL import Image
 import time
+import requests
 
 known_face_encodings = []
 known_face_names = []
+presencas_registras = []
 stop_video_feed = False  # variavel para parar o video feed
 
 def load_known_faces():
@@ -46,7 +48,6 @@ def load_known_faces():
 
     return known_face_encodings, known_face_names
 
-
 def init_known_faces():
     # inicia o processo de carregamento das faces
     log.log_sucesso(__name__, "iniciando Faces")
@@ -64,6 +65,7 @@ def init_known_faces():
     stop_video_feed = False
 
 def gen_frames():
+    propriedades = Propriedades.query.all(prop_nome='status').first()
     # inicializa a captura de video
     video_capture = cv2.VideoCapture(0)
     while True:
@@ -89,6 +91,13 @@ def gen_frames():
                     best_match_index = np.argmin(face_distances)
                     if matches[best_match_index]:
                         name = known_face_names[best_match_index]
+                        # envia requisição de presença
+                        
+                        if propriedades.prop_valor == '1' and name not in presencas_registras:
+                            presencas_registras.append(name)
+                            requests.get(f'http://localhost:5000/presencas/registrar/{name}')
+                            log.log_sucesso(__name__, f"Presença registrada: {name}")
+
                         color = (0, 255, 0)  # verde para conhecido
 
                 cv2.rectangle(frame, (left, top), (right, bottom), color, 2)
@@ -106,7 +115,6 @@ def gen_frames():
 def video_feed():
     # retorna a resposta com o video
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
-
 
 @index.route('/')
 def index():
