@@ -3,7 +3,7 @@ import cv2
 import face_recognition
 import numpy as np
 from . import index
-from app import db
+from app import db, log
 from ..tabelas import Usuarios, Imagens, Propriedades
 import base64
 from io import BytesIO
@@ -34,18 +34,20 @@ def load_known_faces():
                 if face_encodings:
                     known_face_encodings.append(face_encodings[0])
                     known_face_names.append(user.nome)
-                    print(f"Usuario {user.nome} carregado.")
+                    log.log_sucesso(__name__, f"usuario {user.nome} carregado.")
             except Exception as e:
-                print(f"Erro ao carregar a imagem do usuario: {user.nome}: {e}")
+                log.log_erro(__name__, f"erro ao carregar a imagem do usuario: {user.nome}: {e}")
     
     return known_face_encodings, known_face_names
 
 def init_known_faces():
-    print("Iniciando Faces")
+    # inicia o processo de carregamento das faces
+    log.log_sucesso(__name__, "iniciando Faces")
     global known_face_encodings, known_face_names
     known_face_encodings, known_face_names = load_known_faces()
 
 def gen_frames():
+    # inicializa a captura de video
     video_capture = cv2.VideoCapture(0)
     while True:
         success, frame = video_capture.read()
@@ -60,14 +62,14 @@ def gen_frames():
             for (top, right, bottom, left), face_encoding in zip(face_locations, face_encodings):
                 matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
                 name = "Não Reconhecido"
-                color = (0, 0, 255)  # Vermelho para desconhecido
+                color = (0, 0, 255)  # vermelho para desconhecido
 
                 face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
                 if face_distances.size > 0:
                     best_match_index = np.argmin(face_distances)
                     if matches[best_match_index]:
                         name = known_face_names[best_match_index]
-                        color = (0, 255, 0)  # Verde para conhecido
+                        color = (0, 255, 0)  # verde para conhecido
 
                 cv2.rectangle(frame, (left, top), (right, bottom), color, 2)
 
@@ -82,12 +84,14 @@ def gen_frames():
 
 @index.route('/video_feed')
 def video_feed():
+    # retorna a resposta com o video
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @index.route('/')
 def index():
     # inicializa o sistema de faces
     init_known_faces()
+
     # obtem o status
     try:
         pass

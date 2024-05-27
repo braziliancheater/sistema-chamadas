@@ -5,6 +5,7 @@ flask-bcrypt
 flask-login
 flask-wtf
 email-validator
+requests
 
 face_recognition
 git+https://github.com/ageitgey/face_recognition_models

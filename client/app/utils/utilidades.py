@@ -20,7 +20,7 @@ class Logger:
         print(f'{Fore.GREEN}[SUCCESS][{func}] {msg}{Style.RESET_ALL}')
 
     @staticmethod
-    def log_aviso(func, msg):
+    def log_erro(func, msg):
         """
         Printa uma mensagem de aviso.
 
@@ -30,7 +30,7 @@ class Logger:
         print(f'{Fore.RED}[ERROR][{func}] {msg}{Style.RESET_ALL}')
 
     @staticmethod
-    def log_erro(func, msg):
+    def log_aviso(func, msg):
         """
         Printa uma mensagem de erro.
 
@@ -60,7 +60,7 @@ class Utilidades(Logger):
             Utilidades.log_error(__name__, 'Erro ao importar o módulo subprocess')
         
         print('fho - sistema de presenças\n'
-              f'servidor | git: {get_git_revision_short_hash()} | porta: 5000\n')
+              f'cliente | git: {get_git_revision_short_hash()} | porta: 5001\n')
 
     @staticmethod
     def limpar_tela():
