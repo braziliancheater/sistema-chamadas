@@ -32,7 +32,7 @@ def parar_presencas():
 @presencas.route('/presencas/registrar/<string:nome>')
 def presencas_registrar(nome):
     log.log_aviso(__name__, f"Iniciando processo de presença: {nome}")
-    propriedades = Propriedades.query.all()
+    propriedades = Propriedades.query.filter_by(prop_nome='status').first()
     if propriedades.prop_valor == '1':
         try:
             usuario = Usuarios.query.filter_by(nome=nome).first()
