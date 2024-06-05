@@ -69,9 +69,40 @@
              </div>
           </div>
        </aside>
-       <div>
 
+       <div class="lg:ml-64 p-4">
+         <h2 class="text-xl font-bold">Iniciar Presenca</h2>
+         <p>Lista de clientes conectados e o status de cada.</p>
+         <table class="w-full divide-y divide-gray-200 border-gray-200 border">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome do Cliente</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Porta</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Opções</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">localhost</td>
+                <td class="px-6 py-4 whitespace-nowrap">5001</td>
+                <td class="px-6 py-4 whitespace-nowrap">{{ status }}</td>
+                <td>
+                  {% if status is none or status == 0 %}
+                     <form action="http://localhost:5001/presencas/iniciar" method="GET" style="display: inline;">
+                        <button type="submit" class="text-red-600 hover:text-red-900 ml-4" onclick="return confirm('Tem certeza que deseja iniciar as presencas?');">Iniciar Presenças</button>
+                     </form>
+                  {% else %}
+                     <form action="http://localhost:5001/presencas/parar" method="GET" style="display: inline;">
+                        <button type="submit" class="text-red-600 hover:text-red-900 ml-4" onclick="return confirm('Tem certeza que deseja finalizar as presencas?');">Finalizar Presenças</button>
+                     </form>
+                  {% endif %}
+                </td>
+              </tr>
+            </tbody>
+          </table>
        </div>
+
     </div>
  </div>
 {% endblock %}

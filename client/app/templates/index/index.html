@@ -128,7 +128,7 @@
                 })
                 .then(text => {
                     alert(text);
-                    updateStatus();
+                    window.location.reload(); // recarregar a página, depois do alerta
                 })
                 .catch(error => {
                     alert(error.message);
