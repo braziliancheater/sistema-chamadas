@@ -3,3 +3,5 @@ __pycache__
 *.pyc
 embarcados
 .vscode
+client/instance/banco_cliente.db
+server/instance/banco_servidor.db

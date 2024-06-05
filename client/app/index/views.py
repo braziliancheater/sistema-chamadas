@@ -121,12 +121,13 @@ def index():
     init_known_faces()
     usuarios = Usuarios.query.all()
     valor = Propriedades.query.filter_by(prop_nome='status').first()
-    if valor.prop_valor is None:
+    
+    if not valor:
         log.log_aviso(__name__, "Propriedade status não encontrada, criando.")
-        valor = '0'
-        prop = Propriedades(prop_nome='status', prop_valor=valor)
-        db.session.add(prop)
+        valor = Propriedades(prop_nome='status', prop_valor='0')
+        db.session.add(valor)
         db.session.commit()
         time.sleep(2)
+    
     status = f'Chamada em andamento | Prop: {valor.prop_valor}' if valor.prop_valor == '1' else f'Aguardando chamada | Prop: {valor.prop_valor}'
     return render_template('index/index.html', status=status, usuarios=usuarios)

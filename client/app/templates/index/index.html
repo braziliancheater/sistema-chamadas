@@ -3,54 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FHO Faltas - Pagina Inicial</title>
+    <title>FHO Faltas | Pagina Inicial</title>
+
+    <link rel="shortcut icon" href="../../static/images/favicon.png" type="image/x-icon">
 
     <style>
-        table, th, td {
-            border: 1px solid black;
-            border-collapse: collapse;
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: auto;
+        }
+
+        #camera-feed {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: black;
+        }
+
+        img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        #debug-info {
+            padding: 20px;
+            background: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        body::-webkit-scrollbar {
+            width: 12px; 
+        }
+
+        body::-webkit-scrollbar-track {
+            background: #333;
+        }
+
+        body::-webkit-scrollbar-thumb {
+            background-color: #888; 
+            border-radius: 6px;
+            border: 3px solid #333;
+        }
+
+        body::-webkit-scrollbar-thumb:hover {
+            background-color: #555;
         }
     </style>
 </head>
 <body>
-    <img src="{{ url_for('index.video_feed') }}" width="800" />
-    <p>Status do sistema de presenças: {{ status }}</p>
-    <button id="presenca_inicio">Iniciar Chamada</button>
-    <button id="presenca_fim">Finalizar Chamada</button>
-    <button id="sincronizar_usu">Forçar Sincronização de Usuários</button>
+    <div id="camera-feed">
+        <img src="{{ url_for('index.video_feed') }}" alt="Camera"/>
+    </div>
 
-    <table style="padding-top: 10px; margin-top: 10px;">
-        <thead>
-        <tr>
-            <th>Nome</th>
-            <th>RA</th>
-            <th>Email</th>
-            <th>Foto</th>
-            <th>Professor</th>
-        </tr>
-        </thead>
-        <tbody>
-            {% for usuario in usuarios %}
+    <div id="debug-info">
+        <p>Status do sistema de presenças: <span id="status">{{ status }}</span></p>
+        <button id="presenca_inicio">Iniciar Chamada</button>
+        <button id="presenca_fim">Finalizar Chamada</button>
+        <button id="sincronizar_usu">Forçar Sincronização de Usuários</button>
+
+        <table style="padding-top: 10px; margin-top: 10px;">
+            <thead>
             <tr>
-                <td>{{ usuario.nome }}</td>
-                <td>{{ usuario.ra }}</td>
-                <td>{{ usuario.email }}</td>
-                <td>
-                    {% if usuario.imagens %}
-                        {% for imagem in usuario.imagens %}
-                            <img src="{{ imagem.imagem }}" alt="Foto de {{ usuario.nome }}" style="width: 50px; height: 50px;">
-                        {% endfor %}
-                    {% else %}
-                        Sem Fotos
-                    {% endif %}
-                </td>
-                <td>{{ usuario.professor }}</td>
+                <th>Nome</th>
+                <th>RA</th>
+                <th>Email</th>
+                <th>Foto</th>
+                <th>Professor</th>
             </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for usuario in usuarios %}
+                <tr>
+                    <td>{{ usuario.nome }}</td>
+                    <td>{{ usuario.ra }}</td>
+                    <td>{{ usuario.email }}</td>
+                    <td>
+                        {% if usuario.imagens %}
+                            {% for imagem in usuario.imagens %}
+                                <img src="{{ imagem.imagem }}" alt="Foto de {{ usuario.nome }}" style="width: 50px; height: 50px;">
+                            {% endfor %}
+                        {% else %}
+                            Sem Fotos
+                        {% endif %}
+                    </td>
+                    <td>{{ usuario.professor }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
     <script>
+        function updateStatus() {
+            fetch('/obter_status')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao obter status');
+                    }
+                    return response.text();
+                })
+                .then(text => {
+                    let statusText = text === '1' ? 'Chamada em andamento | Prop: 1' : 'Aguardando chamada | Prop: 0';
+                    document.getElementById('status').innerText = statusText;
+                    document.getElementById('status').style.color = text === '1' ? 'green' : 'red';
+                })
+                .catch(error => {
+                    console.error('Erro ao atualizar status:', error);
+                });
+        }
+
         document.getElementById('sincronizar_usu').addEventListener('click', function() {
             fetch('/sincronismo/forcar')
                 .then(response => {
@@ -61,11 +128,13 @@
                 })
                 .then(text => {
                     alert(text);
+                    updateStatus();
                 })
                 .catch(error => {
                     alert(error.message);
                 });
         });
+
         document.getElementById('presenca_inicio').addEventListener('click', function() {
             fetch('/presencas/iniciar')
                 .then(response => {
@@ -76,11 +145,13 @@
                 })
                 .then(text => {
                     alert(text);
+                    updateStatus();
                 })
                 .catch(error => {
                     alert(error.message);
                 });
         });
+
         document.getElementById('presenca_fim').addEventListener('click', function() {
             fetch('/presencas/parar')
                 .then(response => {
@@ -91,11 +162,17 @@
                 })
                 .then(text => {
                     alert(text);
+                    updateStatus();
                 })
                 .catch(error => {
                     alert(error.message);
                 });
         });
+
+        // atualizar status inicialmente
+        updateStatus();
+
+        // setInterval(updateStatus, 5000); // Every 5 seconds
     </script>
 </body>
 </html>
