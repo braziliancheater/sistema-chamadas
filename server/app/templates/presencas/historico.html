@@ -73,48 +73,33 @@
            <div id="main-content" class="h-full w-full bg-white relative overflow-y-auto lg:ml-64">  
             <main>
             <div class="px-4">
-                <h2 class="text-xl font-bold">Listagem de Usuários</h2>
-                <p class="text-gray-800">Listagem de todos os usuarios cadastrados no sistema.</p>
+                <h2 class="text-xl font-bold">Historico de Presencas</h2>
+                <p class="text-gray-800">Historico de todas as presencas registradas no cliente.</p>
                 <div class="w-full grid gap-4 pt-2">
                   <table class="min-w-full divide-y divide-gray-200 border-gray-200 border">
                      <thead class="bg-gray-50">
                        <tr>
                          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
                          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">RA</th>
-                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Foto</th>
-                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Opções</th>
+                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data</th>
+                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hora</th>
+                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cliente</th>
+                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Opcoes</th>
                        </tr>
                      </thead>
                      <tbody class="bg-white divide-y divide-gray-200">
-                       {% for usuario in usuarios %}
+                       {% for presenca in presencas %}
                        <tr>
-                         <td class="px-6 py-4 whitespace-nowrap">{{ usuario.nome }}</td>
-                         <td class="px-6 py-4 whitespace-nowrap">{{ usuario.ra }}</td>
-                         <td class="px-6 py-4 whitespace-nowrap">{{ usuario.email }}</td>
+                         <td class="px-6 py-4 whitespace-nowrap">{{ presenca.nome }}</td>
+                         <td class="px-6 py-4 whitespace-nowrap">{{ presenca.ra }}</td>
+                         <td class="px-6 py-4 whitespace-nowrap">{{ presenca.data }}</td>
+                         <td class="px-6 py-4 whitespace-nowrap">{{ presenca.hora }}</td>
+                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">localhost:5001</td>
                          <td class="px-6 py-4 whitespace-nowrap">
-                           {% if usuario.imagens %}
-                             {% for imagem in usuario.imagens %}
-                               <img src="{{ imagem.imagem }}" alt="Foto de {{ usuario.nome }}" class="w-12 h-12 rounded-full">
-                             {% endfor %}
-                           {% else %}
-                             Sem Fotos
-                           {% endif %}
-                         </td>
-                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                           <form action="{{ url_for('autenticacao.deletar_usuario', id=usuario.id) }}" method="POST" style="display: inline;">
-                             <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Tem certeza que deseja apagar esse usuario?');">Apagar</button>
-                           </form>
-                           {% if usuario.professor is none or usuario.professor == 0 %}
-                           <form action="{{ url_for('autenticacao.tornar_professor', id=usuario.id) }}" method="POST" style="display: inline;">
-                             <button type="submit" class="text-blue-600 hover:text-blue-900 ml-4" onclick="return confirm('Tem certeza que deseja tornar esse usuário professor?');">Tornar Professor</button>
-                           </form>
-                           {% else %}
-                           <form action="{{ url_for('autenticacao.remover_professor', id=usuario.id) }}" method="POST" style="display: inline;">
-                             <button type="submit" class="text-red-600 hover:text-red-900 ml-4" onclick="return confirm('Tem certeza que deseja remover esse professor?');">Remover Professor</button>
-                           </form>
-                           {% endif %}
-                         </td>
+                            <form action="{{ url_for('presencas.apagar_presenca', id=presenca.id) }}" method="POST" style="display: inline;">
+                                <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Tem certeza que deseja apagar essa presença?');">Apagar</button>
+                            </form>
+                        </td>
                        </tr>
                        {% endfor %}
                      </tbody>

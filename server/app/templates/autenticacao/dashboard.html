@@ -69,9 +69,32 @@
              </div>
           </div>
        </aside>
-       <div>
+       <div class="lg:ml-64 p-4 grid grid-cols-3 w-full">
+            <div class="w-full p-4">
+                <div class="bg-white border border-gray-200 p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 flex inline">
+                        <svg class="mt-1.5 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
+                        Total de Usuarios Cadastrados
+                     </h3>
+                    <p class="text-3xl font-bold text-gray-700">{{ total_usuarios }}</p>
+                </div>
+            </div>
+        
+            <div class="w-full p-4">
+                <div class="bg-white border border-gray-200 p-6">
+                    <h3 class="text-lg font-semibold text-gray-800">Total de Endpoints Conectados</h3>
+                    <p class="text-3xl font-bold text-gray-700">{{ total_endpoints }}</p>
+                </div>
+            </div>
+        
+            <div class="w-full p-4">
+                <div class="bg-white border border-gray-200 p-6">
+                    <h3 class="text-lg font-semibold text-gray-800">Total de Presencas Registradas</h3>
+                    <p class="text-3xl font-bold text-gray-700">{{ total_presencas }}</p>
+                </div>
+            </div>
+        </div>
 
-       </div>
     </div>
  </div>
 {% endblock %}

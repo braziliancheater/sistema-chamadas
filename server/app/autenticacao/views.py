@@ -2,7 +2,7 @@ from flask import render_template, request, redirect, url_for, flash
 
 from . import autenticacao
 from .. import db, bcrypt
-from ..tabelas import Usuarios, Imagens
+from ..tabelas import Usuarios, Imagens, Presencas
 from ..forms import FormularioLogin, FormularioRegistro
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -77,7 +77,13 @@ def logout():
 @autenticacao.route("/dashboard")
 @login_required
 def dashboard():
-    return render_template('autenticacao/dashboard.html', title='Dashboard')
+    try:
+        total_usuarios = Usuarios.query.count()
+        total_presencas = Presencas.query.count()
+        total_endpoints = 1
+        return render_template('autenticacao/dashboard.html', total_usuarios=total_usuarios, total_presencas=total_presencas, total_endpoints=total_endpoints, title='Dashboard')
+    except Exception as e:
+        return render_template('autenticacao/dashboard.html', total_usuarios=0, total_presencas=0, total_endpoints=0, title='Dashboard', erro=str(e))
 
 @autenticacao.route("/lista_usuarios")
 @login_required

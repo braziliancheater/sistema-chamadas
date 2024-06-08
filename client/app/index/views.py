@@ -10,11 +10,33 @@ from PIL import Image
 import time
 import requests
 from flask import render_template, Response
+import threading
 
 known_face_encodings = []
 known_face_names = []
-presencas_registras = []
+
+presenca_registrada = {}  # Dicionário para manter o status de presença de cada pessoa
 stop_video_feed = False
+status = '0'  # Inicialmente, o status é '0'
+last_face_detected_time = time.time()
+
+def update_status():
+    global status
+    while not stop_video_feed:
+        try:
+            response = requests.get('http://localhost:5001/obter_status')
+            if response.status_code == 200:
+                status = response.text
+            else:
+                status = '0'
+        except Exception as e:
+            status = '0'
+        time.sleep(2)  # Atualiza o status a cada 2 segundos
+
+def start_status_thread():
+    status_thread = threading.Thread(target=update_status)
+    status_thread.daemon = True
+    status_thread.start()
 
 def load_known_faces():
     global known_face_encodings, known_face_names
@@ -45,16 +67,19 @@ def init_known_faces():
     log.log_sucesso(__name__, "iniciando Faces")
     global known_face_encodings, known_face_names, stop_video_feed
     stop_video_feed = True
-    time.sleep(2)  # Wait for 2 seconds to ensure the video feed is stopped
+    time.sleep(2)  # espera 2 segundos para parar o feed de vídeo
     try:
         known_face_encodings, known_face_names = load_known_faces()
     except Exception as e:
         log.log_erro(__name__, f"erro ao carregar as faces: {e}")
     stop_video_feed = False
+
 def gen_frames():
+    global last_face_detected_time
     video_capture = cv2.VideoCapture(0)
-    process_this_frame = True  # Processa apenas um frame a cada 2 frames para economizar tempo de processamento
-    frame_count = 0  # Contador de frames
+    process_this_frame = True
+    frame_count = 0
+
     while True:
         if stop_video_feed:
             break
@@ -63,44 +88,77 @@ def gen_frames():
         if not success:
             break
         else:
-            rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # converte em rgb
-            small_frame = cv2.resize(rgb_frame, (0, 0), fx=0.25, fy=0.25)  # diminui a resolução da imagem para 1/4
+            rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            small_frame = cv2.resize(rgb_frame, (0, 0), fx=0.25, fy=0.25)
 
-            # Processa o frame apenas se o contador indicar
+            faces_detected = False
+
             if process_this_frame:
-                # Reduz o processamento realizando-o apenas a cada 2 frames
-                if frame_count % 2 == 0:
+                if frame_count % 2 == 0 and status == '1':
                     face_locations = face_recognition.face_locations(small_frame)
                     face_encodings = face_recognition.face_encodings(small_frame, face_locations)
 
-                    for (top, right, bottom, left), face_encoding in zip(face_locations, face_encodings):
+                    if face_encodings:
+                        faces_detected = True
+                        last_face_detected_time = time.time()
+
+                    for face_encoding in face_encodings:
                         matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
-                        name = "Unknown"
+                        name = "Desconhecido"
                         face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
                         if True in matches:
                             best_match_index = np.argmin(face_distances)
                             name = known_face_names[best_match_index]
 
-                            status_presenca = requests.get('http://localhost:5001/obter_status').text
-                            if status_presenca == '1' and name not in presencas_registras:
-                                presencas_registras.append(name)
-                                status = requests.get(f'http://localhost:5001/presencas/registrar/{name}')
-                                if status.status_code == 200:
-                                    log.log_sucesso(__name__, f"Presença registrada: {name}")
-                                else:
-                                    log.log_erro(__name__, f"Erro ao registrar presença: {name}")
+                            # Atualiza o status de presença para "registrado"
+                            presenca_registrada[name] = "Presença registrada"
+                        else:
+                            # Atualiza o status de presença para "não registrado"
+                            presenca_registrada[name] = "Presença não registrada"
 
-                        cv2.putText(frame, name, (left + 6, bottom + 20), cv2.FONT_HERSHEY_DUPLEX, 1.0, (255, 255, 255), 1)
+            # Desenha um quadrado no meio da tela para indicar a presença se houver uma face detectada recentemente
+            height, width, _ = frame.shape
+            current_time = time.time()
+
+            if faces_detected or current_time - last_face_detected_time <= 5:
+                for name, presence_status in presenca_registrada.items():
+                    text = f"Reconhecido: {name} | {presence_status}"
+                    font = cv2.FONT_HERSHEY_DUPLEX
+                    font_scale = 0.8
+                    thickness = 1
+                    text_size, _ = cv2.getTextSize(text, font, font_scale, thickness)
+
+                    # Calcular a posição do quadrado centralizado
+                    text_width, text_height = text_size
+                    box_x = (width - text_width) // 2 - 10
+                    box_y = (height + text_height) // 2 + 100
+                    box_width = text_width + 20
+                    box_height = text_height + 20
+
+                    # Desenhar o fundo do texto
+                    color = (0, 255, 0) if presence_status == "Presença registrada" else (0, 0, 255)
+                    cv2.rectangle(frame, (box_x, box_y - text_height - 10), (box_x + box_width, box_y + 10), color, cv2.FILLED)
+
+                    # Desenhar o texto centralizado
+                    cv2.putText(frame, text, (box_x + 10, box_y - 5), font, font_scale, (255, 255, 255), thickness)
 
             ret, buffer = cv2.imencode('.jpg', frame)
             frame = buffer.tobytes()
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
-        frame_count += 1  # Incrementa o contador de frames
-        process_this_frame = not process_this_frame  # Alterna o processamento do frame
+        frame_count += 1
+        process_this_frame = not process_this_frame
 
     video_capture.release()
+
+@index.route('/obter_usuarios')
+def obter_usuarios():
+    global presenca_registrada
+    if presenca_registrada is None:
+        return 'Nenhum usuário detectado', 200
+    else:
+        return presenca_registrada, 200
 
 @index.route('/obter_status')
 def obter_status():
@@ -119,6 +177,7 @@ def video_feed():
 @index.route('/')
 def index():
     init_known_faces()
+    start_status_thread()
     usuarios = Usuarios.query.all()
     valor = Propriedades.query.filter_by(prop_nome='status').first()
     
@@ -129,5 +188,5 @@ def index():
         db.session.commit()
         time.sleep(2)
     
-    status = f'Chamada em andamento | Prop: {valor.prop_valor}' if valor.prop_valor == '1' else f'Aguardando chamada | Prop: {valor.prop_valor}'
-    return render_template('index/index.html', status=status, usuarios=usuarios)
+    status_text = f'Chamada em andamento | Prop: {valor.prop_valor}' if valor.prop_valor == '1' else f'Aguardando chamada | Prop: {valor.prop_valor}'
+    return render_template('index/index.html', status=status_text, usuarios=usuarios)
